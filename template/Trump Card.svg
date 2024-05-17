@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="67.99996mm" height="105.99988mm" viewBox="0 0 192.7558 300.4721">
+  <title>Trump Card</title>
+  <g id="Bleed">
+    <rect x="-0.00003" y="-0.00005" width="192.75583" height="300.47215" style="fill: #009fe3"/>
+  </g>
+  <g id="Cuts_and_Creases" data-name="Cuts and Creases">
+    <path d="M22.67668,8.50435H170.0791a14.1728,14.1728,0,0,1,14.1728,14.1728v255.1182A14.17285,14.17285,0,0,1,170.079,291.9682H22.67668a14.1728,14.1728,0,0,1-14.1728-14.1728V22.67715a14.1728,14.1728,0,0,1,14.1728-14.1728Z" style="fill: #fff;stroke: #1d1d1b;stroke-miterlimit: 10;stroke-width: 0.5px"/>
+  </g>
+  <g id="Guides">
+    <rect x="22.6772" y="22.6772" width="147.4019" height="255.1182" rx="8.5039" ry="8.5039" style="fill: none;stroke: #e6007e;stroke-miterlimit: 10;stroke-width: 0.5px"/>
+    <g>
+      <rect x="71.51731" y="135.59316" width="8.50394" height="8.50394" style="fill: #009fe3"/>
+      <rect x="71.51731" y="145.75983" width="8.50394" height="8.50394" style="fill: #fff;stroke: #1d1d1b;stroke-linejoin: bevel;stroke-width: 0.5px"/>
+      <text transform="translate(85.51906 142.0948)" style="font-size: 8px;fill: #1d1d1b;font-family: MyriadPro-Regular, Myriad Pro">Bleed <tspan x="20.44775" y="0" style="letter-spacing: -0.00299072265625em">A</tspan><tspan x="25.31982" y="0" style="letter-spacing: -0.01007080078125em">r</tspan><tspan x="27.85547" y="0" style="letter-spacing: 0.00006103515625em">ea</tspan></text>
+      <text transform="translate(85.51906 152.58427)" style="font-size: 8px;fill: #1d1d1b;font-family: MyriadPro-Regular, Myriad Pro"><tspan style="letter-spacing: -0.0260009765625em">F</tspan><tspan x="3.68799" y="0">inal Si</tspan><tspan x="23.25586" y="0" style="letter-spacing: -0.0069580078125em">z</tspan><tspan x="26.62402" y="0">e</tspan></text>
+      <rect x="71.51731" y="155.9265" width="8.50394" height="8.50394" style="fill: none;stroke: #e6007e;stroke-width: 0.5px"/>
+      <text transform="translate(85.51924 163.07379)" style="font-size: 8px;fill: #1d1d1b;font-family: MyriadPro-Regular, Myriad Pro"><tspan style="letter-spacing: 0.00299072265625em">S</tspan><tspan x="3.96777" y="0">a</tspan><tspan x="7.82373" y="0" style="letter-spacing: -0.01300048828125em">f</tspan><tspan x="10.05566" y="0" style="letter-spacing: 0.00006103515625em">e </tspan><tspan x="15.75977" y="0" style="letter-spacing: -0.00299072265625em">A</tspan><tspan x="20.63184" y="0" style="letter-spacing: -0.010009765625em">r</tspan><tspan x="23.16797" y="0">ea</tspan></text>
+    </g>
+  </g>
+</svg>
