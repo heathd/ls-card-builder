@@ -1,12 +1,12 @@
 # Readme - LS Card generator
 
-This is designed to generate card templates which can be printed by Ivory Graphics
+This is designed to generate card templates which can be printed by [Ivory Graphics](https://www.ivory.co.uk/)
 
 Recommended format:
 
-Card Size: Trumps
-Material: 350gsm Zanta Games Board
-Cards per pack: 34
+* Card Size: Trumps
+* Material: 350gsm Zanta Games Board
+* Cards per pack: 34
 
 The print spec is:
 
