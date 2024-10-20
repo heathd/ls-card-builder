@@ -8,6 +8,7 @@ require 'text_formatter'
 
 class CardRenderer
   include Prawn::View
+  attr_reader :card_yml_file
 
   def initialize(card_yml_file)
     @card_yml_file = card_yml_file
@@ -36,7 +37,12 @@ class CardRenderer
 
   def colour_for(card_type)
     {
-      "Reveal" => "71c837"
+      "Reveal" => "71c837",
+      "Analyze" => "9955ff",
+      "Share" => "37abc8",
+      "Strategize" => "c83771",
+      "Help" => "916f7c",
+      "Plan" => "ff7f2a"
     }.fetch(card_type)
   end
 
@@ -79,7 +85,7 @@ class CardRenderer
   def crop_left()= 3.mm
 
   def render_crop_area
-    fill_color 'FFFFFF' #'FCFCFC'
+    fill_color 'ffffff'
     fill do
       rounded_rectangle [crop_left, crop_top], crop_width, crop_height, 3.mm
     end
@@ -87,14 +93,19 @@ class CardRenderer
 
   def render_safe_area
     # Safe area
-    fill_color 'FFFFFF' #'FCFCFC'
+    fill_color 'ffffff'
     fill do
       rounded_rectangle [8.mm, 98.mm], 52.mm, 90.mm, 3.mm
     end
   end
 
+  def icon_file
+    filename = File.basename(card_yml_file, ".yml") + ".svg"
+    File.dirname(__FILE__) + "/../icons/#{filename}"
+  end
+
   def render_icon
-    svg File.read(File.dirname(__FILE__) + "/../icons/1-2-4-all.svg"), at: [9.mm, 106.mm-9.mm], width: 15.mm
+    svg File.read(icon_file), at: [9.mm, 106.mm-9.mm], width: 15.mm
   end
 
   def title_font(size: )
@@ -105,10 +116,11 @@ class CardRenderer
     font "Proba Pro", { style: :normal, size: size }.merge(kwds)
   end
 
+  def masthead_height() = 25.mm
   def render_title_and_purpose
     fill_color '000000'
     stroke_color '000000'
-    bounding_box [28.mm, 106.mm-9.mm], width: 31.5.mm, height: 23.mm do
+    bounding_box [28.mm, 106.mm-9.mm], width: 31.5.mm, height: masthead_height do
       move_to 0.mm, 20.mm
       title_font(size: 4.mm)
       text card[:title],align: :right
@@ -118,7 +130,7 @@ class CardRenderer
     end
   end
 
-  def sep_top()= top - 32.mm
+  def sep_top()= top - masthead_height - 9.mm
   def sep_height()= 5.mm
   def sep_bottom()= sep_top - sep_height
 

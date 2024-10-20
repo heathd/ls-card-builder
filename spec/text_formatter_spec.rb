@@ -33,6 +33,14 @@ RSpec.describe 'TextFormatter' do
     expect(formatted[0]).to have_key(:color)
   end
 
+  it 'treats paras with specific text as headings' do
+    expect(TextFormatter.new("Invitation").format.first).to have_key(:color)
+    expect(TextFormatter.new("People").format.first).to have_key(:color)
+    expect(TextFormatter.new("Space & Materials").format.first).to have_key(:color)
+    expect(TextFormatter.new("String With").format.first).to have_key(:color)
+    expect(TextFormatter.new("Something else").format.first).not_to have_key(:color)
+  end
+
   it 'renders a heading and body para' do
     text = <<~STUFF
     # Invitation
@@ -51,17 +59,15 @@ RSpec.describe 'TextFormatter' do
 
   it 'inserts a spacer paragraph when a heading follows another para' do
     text = <<~STUFF
-    # Invitation
-    
+    Invitation
     Body para
     
-    # Heading 2
-
+    People
     More
     STUFF
 
     formatted = TextFormatter.new(text).format
-    expect(formatted.map {|f| f[:text]}).to eq(["Invitation\n", "Body para\n", "\n", "Heading 2\n", "More\n"])
+    expect(formatted.map {|f| f[:text]}).to eq(["Invitation\n", "Body para\n", "\n", "People\n", "More\n"])
   end
 
   it 'renders a list' do

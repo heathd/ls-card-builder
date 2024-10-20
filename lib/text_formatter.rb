@@ -6,7 +6,12 @@ class TextFormatter
   end
 
   def format
-    paras = text.split("\n\n")
+    paras = text
+      .gsub(/^Invitation$/, "# Invitation\n")
+      .gsub(/^People$/, "# People\n")
+      .gsub(/^Space & Materials$/, "# Space & Materials\n")
+      .gsub(/^String With$/, "# String With\n")
+      .split("\n\n")
     paras.map.with_index do |para, i|
       if heading?(para)
         heading_para(para, i==0)
