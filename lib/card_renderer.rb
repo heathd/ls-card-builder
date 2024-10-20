@@ -1,5 +1,6 @@
 require 'prawn'
 require 'prawn-svg'
+require 'prawn/table'
 require 'prawn/measurement_extensions'
 require 'prawn/view'
 require 'yaml'
@@ -80,7 +81,7 @@ class CardRenderer
     render_icon(width: nil, height: 9.mm)
     render_title_and_purpose(render_purpose: false)
     render_separator(masthead_height: 12.mm)
-
+    render_back_body
   end
 
   def render_background
@@ -119,7 +120,11 @@ class CardRenderer
   end
 
   def title_font(size: )
-    font "Proba Pro", { style: :semibold, size: size }
+    font "Proba Pro", { style: :bold, size: size }
+  end
+
+  def heading_font(size: )
+    font "Proba Pro", { style: :bold, size: size}
   end
 
   def body_font(size:, **kwds)
@@ -172,6 +177,29 @@ class CardRenderer
 
     body_font(size: 2.7.mm, leading: 0.2.mm)
     formatted_text_box TextFormatter.new(card[:body]).format, at: [l_safe, sep_bottom - 3.mm], height: sep_bottom - b_safe, width: 52.mm
+  end
+
+  def render_back_body
+    paras = card[:back_body].gsub(/^.*Steps\n/, "").split("\n\n")
+    timings = card[:timings]
+    data = paras.zip(timings)
+
+    padding = 2.5.mm
+
+    bounding_box [l_safe, sep_bottom-padding], width: r_safe-l_safe, height: sep_bottom - padding do
+      fill_color '999999'
+      heading_font(size: 2.5.mm)
+      text "Steps"
+
+      fill_color '000000'
+      body_font(size: 2.5.mm)
+
+      table(data,
+            cell_style: { borders: [], padding: [0, 2.mm, 3.mm, 0]},
+            column_widths: { 1 => 10.mm}) do
+        columns(1).align = :right
+      end
+    end
   end
 
 end
