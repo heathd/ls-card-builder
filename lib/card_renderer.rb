@@ -67,10 +67,20 @@ class CardRenderer
     render_background
     render_crop_area
     render_safe_area
-    render_icon
+    render_icon(width: 15.mm)
     render_title_and_purpose
     render_separator
     render_body
+
+    start_new_page
+
+    render_background
+    render_crop_area
+    render_safe_area
+    render_icon(width: nil, height: 9.mm)
+    render_title_and_purpose(render_purpose: false)
+    render_separator(masthead_height: 12.mm)
+
   end
 
   def render_background
@@ -104,8 +114,8 @@ class CardRenderer
     File.dirname(__FILE__) + "/../icons/#{filename}"
   end
 
-  def render_icon
-    svg File.read(icon_file), at: [9.mm, 106.mm-9.mm], width: 15.mm
+  def render_icon(width: 15.mm, height: nil)
+    svg File.read(icon_file), at: [9.mm, 106.mm-9.mm], width: width, height: height
   end
 
   def title_font(size: )
@@ -117,40 +127,42 @@ class CardRenderer
   end
 
   def masthead_height() = 25.mm
-  def render_title_and_purpose
+  def render_title_and_purpose(render_purpose: true)
     fill_color '000000'
     stroke_color '000000'
     bounding_box [28.mm, 106.mm-9.mm], width: 31.5.mm, height: masthead_height do
       move_to 0.mm, 20.mm
       title_font(size: 4.mm)
-      text card[:title],align: :right
+      text card[:title], align: :right
 
-      body_font(size: 2.7.mm)
-      text card[:purpose_statement], align: :right
+      if render_purpose
+        body_font(size: 2.7.mm)
+        text card[:purpose_statement], align: :right
+      end
     end
   end
 
-  def sep_top()= top - masthead_height - 9.mm
   def sep_height()= 5.mm
-  def sep_bottom()= sep_top - sep_height
+  def sep_bottom()= @sep_top - sep_height
 
-  def render_separator
+  def render_separator(masthead_height: 25.mm)
+    @sep_top = top - masthead_height - 9.mm
     separator_midpoint = 36.mm + l_safe
     margin = 2.mm
 
     fill_color colour_for(card[:card_type])
-    fill_rectangle [0.mm, sep_top], separator_midpoint, sep_height
+    fill_rectangle [0.mm, @sep_top], separator_midpoint, sep_height
 
     title_font(size: 3.5.mm)
     fill_color 'ffffff'
-    text_box card[:card_type], at: [8.mm, sep_top - 1.mm]
+    text_box card[:card_type], at: [8.mm, @sep_top - 1.mm]
 
     fill_color 'e6e6e6'
-    fill_rectangle [separator_midpoint, sep_top], page_width - separator_midpoint, sep_height
+    fill_rectangle [separator_midpoint, @sep_top], page_width - separator_midpoint, sep_height
 
     body_font(size: 3.5.mm)
     fill_color '000000'
-    text_box card[:duration], at: [separator_midpoint, sep_top - 1.mm], width: r_safe-separator_midpoint, align: :right
+    text_box card[:duration], at: [separator_midpoint, @sep_top - 1.mm], width: r_safe-separator_midpoint, align: :right
 
   end
 
