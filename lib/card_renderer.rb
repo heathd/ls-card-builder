@@ -11,24 +11,25 @@ class CardRenderer
   include Prawn::View
   attr_reader :card_yml_file
 
-  def initialize(card_yml_file)
+  def initialize(card_yml_file, document: nil)
     @card_yml_file = card_yml_file
+    @document = document
   end
 
   def document
-    @document ||= create_document
+    @document ||= self.default_document
   end
 
-  def create_document
-    doc = Prawn::Document.new(page_size: [page_width, 106.mm], margin: [0,0,0,0])
-    doc.font_families.update(
-      "Proba Pro" => {
-        normal: "/Users/heathd/Library/Fonts/ProbaPro-Regular.ttf",
-        light: "/Users/heathd/Library/Fonts/ProbaPro-Light.ttf",
-        semibold: "/Users/heathd/Library/Fonts/ProbaPro-SemiBold.ttf",
-        bold: "/Users/heathd/Library/Fonts/ProbaPro-Bold.ttf"
-      }
-    )
+  def self.default_document
+    doc = Prawn::Document.new(page_size: [PAGE_WIDTH, 106.mm], margin: [0,0,0,0])
+    # doc.font_families.update(
+    #   "Proba Pro" => {
+    #     normal: "/Users/heathd/Library/Fonts/ProbaPro-Regular.ttf",
+    #     light: "/Users/heathd/Library/Fonts/ProbaPro-Light.ttf",
+    #     semibold: "/Users/heathd/Library/Fonts/ProbaPro-SemiBold.ttf",
+    #     bold: "/Users/heathd/Library/Fonts/ProbaPro-Bold.ttf"
+    #   }
+    # )
     doc
   end
 
@@ -47,7 +48,8 @@ class CardRenderer
     }.fetch(card_type)
   end
 
-  def page_width()= 68.mm
+  PAGE_WIDTH = 68.mm
+  def page_width()= PAGE_WIDTH
   def page_height()= 106.mm
   def page_top()= page_height
   def page_left()= 0.mm
@@ -85,7 +87,7 @@ class CardRenderer
   end
 
   def render_background
-    fill_color 'EEEEEE'
+    fill_color 'ffffff'
     fill_rectangle [page_left, page_top], page_width, page_height
   end
 
@@ -120,22 +122,22 @@ class CardRenderer
   end
 
   def title_font(size: )
-    font "Proba Pro", { style: :bold, size: size }
+    font "Helvetica", { style: :bold, size: size }
   end
 
   def heading_font(size: )
-    font "Proba Pro", { style: :bold, size: size}
+    font "Helvetica", { style: :bold, size: size}
   end
 
   def body_font(size:, **kwds)
-    font "Proba Pro", { style: :normal, size: size }.merge(kwds)
+    font "Helvetica", { style: :normal, size: size }.merge(kwds)
   end
 
   def masthead_height() = 25.mm
   def render_title_and_purpose(render_purpose: true)
     fill_color '000000'
     stroke_color '000000'
-    bounding_box [28.mm, 106.mm-9.mm], width: 31.5.mm, height: masthead_height do
+    bounding_box [26.mm, 106.mm-9.mm], width: 33.5.mm, height: masthead_height do
       move_to 0.mm, 20.mm
       title_font(size: 4.mm)
       text card[:title], align: :right
@@ -149,18 +151,17 @@ class CardRenderer
 
   def sep_height()= 5.mm
   def sep_bottom()= @sep_top - sep_height
+  def separator_midpoint() = 36.mm + l_safe
 
   def render_separator(masthead_height: 25.mm)
     @sep_top = top - masthead_height - 9.mm
-    separator_midpoint = 36.mm + l_safe
     margin = 2.mm
 
-    fill_color colour_for(card[:card_type])
-    fill_rectangle [0.mm, @sep_top], separator_midpoint, sep_height
-
-    title_font(size: 3.5.mm)
-    fill_color 'ffffff'
-    text_box card[:card_type], at: [8.mm, @sep_top - 1.mm]
+    if split_card_type?
+      render_split_card_type
+    else
+      render_card_type
+    end
 
     fill_color 'e6e6e6'
     fill_rectangle [separator_midpoint, @sep_top], page_width - separator_midpoint, sep_height
@@ -171,12 +172,29 @@ class CardRenderer
 
   end
 
+  def split_card_type?
+    card[:card_type] = card[:card_type].split("/").map(&:strip).first
+    false
+    # if card[:card_type] =~ %r{/}
+    #
+    # end
+  end
+
+  def render_card_type
+    fill_color colour_for(card[:card_type])
+    fill_rectangle [0.mm, @sep_top], separator_midpoint, sep_height
+
+    title_font(size: 3.5.mm)
+    fill_color 'ffffff'
+    text_box card[:card_type], at: [8.mm, @sep_top - 1.mm]
+  end
+
   def render_body
     fill_color '000000'
     stroke_color '000000'
 
-    body_font(size: 2.7.mm, leading: 0.2.mm)
-    formatted_text_box TextFormatter.new(card[:body]).format, at: [l_safe, sep_bottom - 3.mm], height: sep_bottom - b_safe, width: 52.mm
+    body_font(size: 2.6.mm, leading: 0.2.mm)
+    formatted_text_box TextFormatter.new(card[:body]).format, at: [l_safe, sep_bottom - 3.mm], height: sep_bottom - b_safe - 3.mm, width: 52.mm
   end
 
   def render_back_body

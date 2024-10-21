@@ -82,4 +82,16 @@ RSpec.describe 'TextFormatter' do
     formatted = TextFormatter.new(text).format
     expect(formatted.map {|f| f[:text]}).to eq(["Here's a list of stuff:\n", "• one\n", "• two\n", "• three\n"])
   end
+
+  it 'renders a list with Ask: prefix' do
+    text = <<~STUFF
+    Ask:
+    - one
+    - two
+    - three
+    STUFF
+
+    formatted = TextFormatter.new(text).format
+    expect(formatted.map {|f| f[:text]}).to eq(["Ask:\n", "• one\n", "• two\n", "• three\n"])
+  end
 end

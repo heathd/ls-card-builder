@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/../extractor.rb"
+require "extractor.rb"
 
 RSpec.describe Extractor do
   subject { described_class.new(card_front, card_back) }

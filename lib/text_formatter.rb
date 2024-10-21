@@ -24,7 +24,7 @@ class TextFormatter
   end
 
   def list?(para)
-    para.start_with?("-")
+    para =~ /^- /
   end
 
   def heading?(para)
@@ -36,7 +36,7 @@ class TextFormatter
       text: normalise_newlines(para.gsub(/^# */, '')),
       color: '999999',
       styles: [:bold],
-      font: "Proba Pro"
+      font: "Helvetica"
     }
 
     if is_first
@@ -49,22 +49,28 @@ class TextFormatter
   def spacer_para
     {text: "\n",
     styles: [:normal],
-      font: "Proba Pro"}
+      font: "Helvetica"}
   end
 
   def regular_para(para)
     {
       text: normalise_newlines(para),
       styles: [:normal],
-      font: "Proba Pro"
+      font: "Helvetica"
     }
   end
 
   def list_para(para)
     list_items = para.split(/^- +/)
-    list_items.reject(&:empty?).map do |li|
-      {text: "• #{normalise_newlines(li)}"}
+
+    formatted = []
+    if !list_items.first.empty?
+      formatted << {text: normalise_newlines(list_items.first)}
     end
+    list_items[1..-1].each do |li|
+      formatted << {text: "• #{normalise_newlines(li)}"}
+    end
+    formatted
   end
 
   def normalise_newlines(body)

@@ -2,7 +2,6 @@ $LOAD_PATH << File.dirname(__FILE__) + "/lib/"
 require 'card_renderer'
 require 'pathname'
 
-all_cards = Dir[File.dirname(__FILE__) + "/card_yml/*.yml"]
 
 class Mapper
   attr_reader :card_yml
@@ -22,13 +21,54 @@ class Mapper
     FileUtils.mkdir_p(output_dir)
 
     puts "Writing #{output_filename}"
-    card = CardRenderer.new(card_yml)
-    card.render
-    card.save_as(output_filename)
   end
 end
 
-all_cards.each do |card_yml|
-  next if card_yml =~ /main.yml/
-  Mapper.new(card_yml).map!
+order = %w{
+  1-2-4-all.yml
+  impromptu-networking.yml
+  nine-whys.yml
+  wicked-questions.yml
+  appreciative-interviews.yml
+  triz.yml
+  15-percent-solutions.yml
+  troika-consulting.yml
+  what-3.yml
+  discovery-and-action-dialog.yml
+  shift-and-share.yml
+  25-10-crowd-sourcing.yml
+  wise-crowds.yml
+  min-specs.yml
+  improv-prototyping.yml
+  helping-heuristics.yml
+  conversation-cafe.yml
+  user-experience-fishbowl.yml
+  heard-seen-respected.yml
+  drawing-together.yml
+  design-storyboards.yml
+  celebrity-interview.yml
+  social-network-webbing.yml
+  what-i-need-from-you.yml
+  open-space-technology.yml
+  generative-relationships.yml
+  agreement-certainty-matrix.yml
+  simple-ethnography.yml
+  integrated-autonomy.yml
+  critical-uncertainties.yml
+  ecocycle-planning.yml
+  panarchy.yml
+  purpose-to-practice.yml
+}
+
+path = File.dirname(__FILE__) + "/card_yml/"
+
+document = CardRenderer.default_document
+order.each.with_index do |card_yml, i|
+  document.start_new_page if i>0
+  puts card_yml
+  card = CardRenderer.new(path + card_yml, document: document)
+  card.render
 end
+
+document.render_file("pdfs/cards.pdf")
+puts "wrote pdfs/cards.pdf"
