@@ -173,11 +173,37 @@ class CardRenderer
   end
 
   def split_card_type?
-    card[:card_type] = card[:card_type].split("/").map(&:strip).first
-    false
-    # if card[:card_type] =~ %r{/}
-    #
-    # end
+    card[:card_type] =~ %r{/}
+  end
+
+  def render_split_card_type
+    first, second = card[:card_type].split("/").map(&:strip)
+
+    slant_midpoint = l_safe + 15.mm
+    slant_offset = 1.5.mm
+    fill_color colour_for(first)
+    fill_polygon [0.mm, @sep_top],
+                 [slant_midpoint + slant_offset, @sep_top],
+                 [slant_midpoint - slant_offset, @sep_top - sep_height],
+                 [0.mm, @sep_top - sep_height]
+    title_font(size: 3.5.mm)
+    fill_color 'ffffff'
+    text_box first, at: [8.mm, @sep_top - 1.mm]
+
+    fill_color colour_for(second)
+    fill_polygon [slant_midpoint + slant_offset, @sep_top],
+                   [separator_midpoint, @sep_top],
+                   [separator_midpoint, @sep_top - sep_height],
+                   [slant_midpoint - slant_offset, @sep_top - sep_height]
+
+    title_font(size: 3.5.mm)
+    fill_color 'ffffff'
+
+    if second == "Strategize"
+      text_box second, at: [separator_midpoint/2 + 3.5.mm, @sep_top - 1.mm], width: separator_midpoint/2 - 3.5.mm - 1.5.mm
+    else
+      text_box second, at: [separator_midpoint/2 + 5.mm, @sep_top - 1.mm], width: separator_midpoint/2 - 5.mm - 1.mm
+    end
   end
 
   def render_card_type
