@@ -12,6 +12,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.16.7-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.16.7-x86_64-linux)
+      racc (~> 1.4)
     pdf-core (0.10.0)
     prawn (2.5.0)
       matrix (~> 0.4)
@@ -47,6 +49,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-23
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   nokogiri
