@@ -63,12 +63,19 @@ order = %w{
 path = File.dirname(__FILE__) + "/card_yml/"
 
 document = CardRenderer.default_document
+errors = []
 order.each.with_index do |card_yml, i|
   document.start_new_page if i>0
-  puts card_yml
-  card = CardRenderer.new(path + card_yml, document: document)
+  card = CardRenderer.new(path + card_yml, document: document, errors: errors)
   card.render
 end
 
+if errors.any?
+  puts "There were #{errors.count} error(s):"
+  errors.each do |error|
+    puts error.to_s
+  end
+end
+
 document.render_file("pdfs/cards.pdf")
-puts "wrote pdfs/cards.pdf"
+puts "rendered #{order.count} cards to pdfs/cards.pdf"

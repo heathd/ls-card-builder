@@ -9,11 +9,12 @@ require 'text_formatter'
 
 class CardRenderer
   include Prawn::View
-  attr_reader :card_yml_file
+  attr_reader :card_yml_file, :errors
 
-  def initialize(card_yml_file, document: nil)
+  def initialize(card_yml_file, document: nil, errors: [])
     @card_yml_file = card_yml_file
     @document = document
+    @errors = errors
   end
 
   def document
@@ -220,7 +221,56 @@ class CardRenderer
     stroke_color '000000'
 
     body_font(size: 2.6.mm, leading: 0.2.mm)
-    formatted_text_box TextFormatter.new(card[:body]).format, at: [l_safe, sep_bottom - 3.mm], height: sep_bottom - b_safe - 3.mm, width: 52.mm
+    padding_below_separator = 3.mm
+    left_over = formatted_text_box TextFormatter.new(card[:body]).format,
+                                   at: [l_safe, sep_bottom - padding_below_separator],
+                                   height: sep_bottom - b_safe - padding_below_separator,
+                                   width: 52.mm
+    if left_over.any?
+      collect_error(ExcessTextError.new(card, :front, left_over))
+    end
+  end
+
+  class ExcessTextError
+    attr_reader :card, :front_or_back, :excess_text_hashes
+    def initialize(card, front_or_back, excess_text_hashes)
+      @card = card
+      @front_or_back = front_or_back
+      @excess_text_hashes = excess_text_hashes
+    end
+
+    def excess_text
+      excess_text_hashes.map {|l| l[:text]}.join(" ").gsub("\n", " ")
+    end
+
+    def card_title
+      card[:title]
+    end
+
+    def to_s
+      "#{card_title} had some text which didn't fit on the #{front_or_back} side: '#{excess_text}'"
+    end
+  end
+
+  class TableOverflowedError
+    attr_reader :card, :front_or_back
+    def initialize(card, front_or_back)
+      @card = card
+      @front_or_back = front_or_back
+    end
+
+    def card_title
+      card[:title]
+    end
+
+    def to_s
+      "#{card_title}: the table on the #{front_or_back} side overflowed"
+    end
+  end
+
+  def collect_error(error)
+    @errors ||= []
+    @errors << error
   end
 
   def render_back_body
@@ -230,7 +280,7 @@ class CardRenderer
 
     padding = 2.5.mm
 
-    bounding_box [l_safe, sep_bottom-padding], width: r_safe-l_safe, height: sep_bottom - padding do
+    bounding_box [l_safe, sep_bottom-padding], width: r_safe-l_safe, height: sep_bottom - b_safe do
       fill_color '999999'
       heading_font(size: 2.5.mm)
       text "Steps"
@@ -238,10 +288,23 @@ class CardRenderer
       fill_color '000000'
       body_font(size: 2.5.mm)
 
-      table(data,
+      current_page_number = document.page_number
+
+      table = table(data,
             cell_style: { borders: [], padding: [0, 2.mm, 3.mm, 0]},
             column_widths: { 1 => 10.mm}) do
         columns(1).align = :right
+      end
+
+      if current_page_number < document.page_number
+        collect_error(TableOverflowedError.new(card, :back))
+      end
+
+      if !card[:string_with].empty?
+        left_over = formatted_text_box StringWithFormatter.new(card[:string_with]).format, at: [0, cursor], width: 52.mm
+        if left_over.any?
+          collect_error(ExcessTextError.new(card, :back, left_over))
+        end
       end
     end
   end

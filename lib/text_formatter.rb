@@ -3,6 +3,9 @@ class TextFormatter
   attr_reader :text
   def initialize(text)
     @text = text
+
+    # Suppress warning due to use of bullet point
+    Prawn::Fonts::AFM.hide_m17n_warning = true
   end
 
   def format
@@ -47,9 +50,12 @@ class TextFormatter
   end
 
   def spacer_para
-    {text: "\n",
-    styles: [:normal],
-      font: "Helvetica"}
+    {
+      text: "\n",
+      styles: [:normal],
+      font: "Helvetica",
+      size: 2.mm
+    }
   end
 
   def regular_para(para)
@@ -68,12 +74,24 @@ class TextFormatter
       formatted << {text: normalise_newlines(list_items.first)}
     end
     list_items[1..-1].each do |li|
-      formatted << {text: "• #{normalise_newlines(li)}"}
+      formatted << {text: "• " + normalise_newlines(li)}
     end
     formatted
   end
 
   def normalise_newlines(body)
     body.gsub(/\n+\Z/, "").gsub(/\n+/, " ") + "\n"
+  end
+end
+
+class StringWithFormatter < TextFormatter
+  def format
+    paras = text.gsub(/^String With\n/, "").split("\n")
+    formatted_paras = heading_para("String With", true)
+    paras.each do |para|
+      formatted_paras << regular_para(para)
+    end
+
+    formatted_paras.flatten
   end
 end
