@@ -77,5 +77,6 @@ if errors.any?
   end
 end
 
+FileUtils.mkdir_p("pdfs")
 document.render_file("pdfs/cards.pdf")
 puts "rendered #{order.count} cards to pdfs/cards.pdf"
